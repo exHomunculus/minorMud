@@ -1,6 +1,6 @@
-# README #
+# minorMUD #
 
-Using python3 and SQLite3 (which comes pre-installed with python)
+Currently using python3 and SQLite3 (which comes pre-installed with python)
 
 ### What is this repository for? ###
 
