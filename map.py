@@ -46,3 +46,7 @@ class Map(object):
     def briefView(self, id):
         room = self.getRoom(id)
         return room[1] + "\r\n" + self.getExits(id)
+
+    def verboseView(self, id):
+        room = self.getRoom(id)
+        return room[15] + "\r\n" + room[1] + "\r\n" + self.getExits(id)
