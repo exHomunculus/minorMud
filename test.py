@@ -1,7 +1,6 @@
-import muddata
 import map
 
 m = map.Map()
 
-print(m.briefView("2"))
-
+for x in range(1, 14):
+    print(m.verboseView(str(x)))
