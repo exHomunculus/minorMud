@@ -115,3 +115,12 @@ class MudData(object):
     def getPlayer(self, id):
         self.cur.execute("SELECT * FROM players WHERE id = " + id + ";")
         return self.cur.fetchall()
+
+    def getDoor(self, id):
+        self.cur.execute("SELECT * FROM doors WHERE id = " + id + ";")
+        return self.cur.fetchall()
+
+    def getThing(self, thing, id):
+        # So instead of repeating myself for each variant of this I make a utility knife
+        self.cur.execute("SELECT * FROM " + thing + " WHERE id = " + id + ";")
+        return self.cur.fetchall()

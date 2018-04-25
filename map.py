@@ -50,3 +50,21 @@ class Map(object):
     def verboseView(self, id):
         room = self.getRoom(id)
         return room[15] + "\r\n" + room[1] + "\r\n" + self.getExits(id)
+
+    def encodeDirBlob(self, doorID, roomID, doorState):
+        # pass an int of doorID, roomID, and doorState converts each to hex and combines them
+        # return the combo to be used for the direction BLOB of a room
+        # Add a check to make sure the IDs are in range of real IDs <-----------------
+        # if they're not INTs, make them INTs
+        d = int(doorID)
+        r = int(roomID)
+        s = int(doorState)
+        return f'{d:03X}'f'{r:04X}'f'{s:b}'
+
+    def decodeDirBlob(self, dirBlob):
+        # pass it a dirBlob and it returns doorID, roomID, open/close
+        if(len(dirBlob) == 8):
+            return int(dirBlob[:3], 16), int(dirBlob[3:7], 16), int(dirBlob[7])
+        else:
+            # Maybe throw error here. dirBlob should be 7 hex digits and a bool = 8
+            return 0
