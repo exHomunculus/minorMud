@@ -4,7 +4,7 @@ This module will connect to an SQLite database which holds all of the mud data.
 Contains one call MudData which should be instantiated when a mudserver is loaded.
 
 author: Bob Hinkle - hinkle.bob@gmail.com
-author: Oktavious Zero III
+author: Oktavious Zero the Third new author
 """
 
 
