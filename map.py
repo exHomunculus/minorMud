@@ -18,13 +18,13 @@ class Map(object):
 
     def __init__(self, db=dbname):
         # Connect to dB, create a list of all rooms called map
-        self.md = muddata.MudData(db)
-        self.map = self.md.getMap()
+        self.md = muddata.MudData(db)  # Create the muddata object
+        self.map = self.md.getMap()    # Use the muddata object to pull ALL rooms into map variable
 
     def getRoom(self, id):
         # Return room values from map
-        if(int(id) > 0):
-            return self.map[int(id) - 1]
+        if(int(id) > 0):                # Make sure the value isnt 0 (or negative) roomID starts @ 1
+            return self.map[int(id) - 1]  # since array values start with 0, we'll -1 from id(arg)
         else:
             return -1
 
@@ -32,22 +32,35 @@ class Map(object):
         # Create and return a string of viable exits for the room.
         # You need to pass this function the room id.
         if(int(id) > 0):
+            # Grab only the direction BLOBs from the room
             a = self.map[int(id) - 1][2:12]
+            # Create a dictionary for each dir BLOB
+            # This dictionary matches the intended directions (strings) with their BLOBs
             b = {"n": a[0], "ne": a[1], "e": a[2], "se": a[3], "s": a[4],
                  "sw": a[5], "w": a[6], "nw": a[7], "u": a[8], "d": a[9]}
+        # Create an empty string to be returned
         self.exitString = ""
+        # Iterate through dictionary
         for exit in b:
+            # If the BLOB isn't null, save the string associated with it, courtesy of the dictionary
             if b[exit]:
-                self.exitString += exit + ", "
+                self.exitString += exit + ", "  # adding a comma. There could be more than 1 exit
+        # If there were no exits, we don't want a blank string. We want there to be 'None'
         if(self.exitString == ""):
             self.exitString = "None"
+        # Create return string. We strip the trailing ", " if there is one.
         return "Obvious exits: " + self.exitString.rstrip(", ") + "\r\n"
 
     def briefView(self, id):
-        room = self.getRoom(id)
+        # This is the clean way to see a room.
+        # It's the same as verboseView minus the room description.
+        room = self.getRoom(id)  # pull room data from THIS map object, not the DB.
+        # return roomName, return, newline, and the exits (courtesy of getExits)
         return room[1] + "\r\n" + self.getExits(id)
 
     def verboseView(self, id):
+        # This is the dirty way to see a room.
+        # It's the same as briefView except has the roomDescription added
         room = self.getRoom(id)
         return room[15] + "\r\n" + room[1] + "\r\n" + self.getExits(id)
 
