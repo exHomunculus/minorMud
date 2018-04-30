@@ -1,6 +1,113 @@
 import map
+import muddata
+import player
 
 m = map.Map()
+data = muddata.MudData()
+p = player.Player()
+
+NORTH = 2
+NE = 3
+EAST = 4
+SE = 5
+SOUTH = 6
+SW = 7
+WEST = 8
+NW = 9
+UP = 10
+DOWN = 11
+
+ROOM_BLOB = 1
+
 
 for x in range(1, 14):
     print(m.verboseView(str(x)))
+
+#adjacentRoom = m.decodeDirBlob( m.getRoom(1)[11] )[1]
+
+#p.room = m.decodeDirBlob( m.getRoom(1)[11] )[1]
+#data.updatePlayerRoom(str(1),str(p.room))
+roomHere = data.getPlayerRoom(str(1))
+
+myString = ''.join(str(roomHere))
+
+#print("MY STRING" , str(myString))
+#p.room = myString
+
+#print("LENGTH OF mySTRING", len(myString))
+#NOTE: This takes the SQL tuple string, and then extracts the 3 digits of the map to get the room save location
+if(len(myString) == 4):
+    roomSave = myString[1]
+elif(len(myString) == 5):
+    roomSave = myString[1] + myString[2]
+elif(len(myString) == 6):
+    roomSave = myString[1] + myString[2] + myString[3]
+else: roomSave = 1
+
+
+print("ROOMSAVE IS", roomSave)
+
+p.room = roomSave
+
+    
+#if (p.room == None):
+    #p.room = 1
+
+
+    
+
+
+var = 1
+while var == 1 :  # This constructs an infinite loop
+    
+    
+    print("Current ROOM: ")
+    print(p.room)
+    print(m.getRoom(p.room))
+    print(m.getExits(p.room))
+    
+    direction = input("Enter a direction  :")
+    
+    
+    
+    if direction == 'n' :
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[NORTH] )[ROOM_BLOB]
+
+    elif direction == 'ne':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[NE] )[ROOM_BLOB]
+
+    elif direction == 'e':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[EAST] )[ROOM_BLOB]
+      
+    elif direction == 'se':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[SE] )[ROOM_BLOB]
+
+    elif direction == 's':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[SOUTH] )[ROOM_BLOB]
+      
+    elif direction == 'sw':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[SW] )[ROOM_BLOB]
+
+    elif direction == 'w':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[WEST] )[ROOM_BLOB]
+      
+    elif direction == 'nw':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[NW] )[ROOM_BLOB]      
+
+    elif direction == 'u':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[UP] )[ROOM_BLOB]
+
+    elif direction == 'd':
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[DOWN] )[ROOM_BLOB]
+      
+
+    else:
+      print("must enter a valid direction")
+      
+    data.updatePlayerRoom(str(1),str(p.room))
+    roomHere = data.getPlayerRoom(str(1))
+    myString = "".join(str(roomHere))
+    #print("ROOMHERE",  myString )
+
+    
+
