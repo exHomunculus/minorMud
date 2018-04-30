@@ -109,6 +109,22 @@ class MudData(object):
                          " WHERE id = " + pVals[0] + ";")
         self.db.commit()
 
+    def updatePlayerRoom(self, id, roomNum):
+      
+        self.cur.execute("UPDATE players SET " +
+
+                         "room = " + roomNum +
+
+                         " WHERE id = " + id + ";")
+        self.db.commit()
+        
+    def getPlayerRoom(self, id):
+        
+        #self.cur.execute("SELECT room FROM players WHERE id = " + id + ";")
+        self.cur.execute("SELECT room FROM players WHERE id = " + id + ";")
+        return self.cur.fetchone()
+        
+
     def deletePlayer(self, id):
         self.cur.execute("DELETE FROM players WHERE id = " + id + ";")
         self.db.commit()

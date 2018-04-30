@@ -1,7 +1,9 @@
 import map
+import muddata
 import player
 
 m = map.Map()
+data = muddata.MudData()
 p = player.Player()
 
 NORTH = 2
@@ -21,21 +23,42 @@ ROOM_BLOB = 1
 for x in range(1, 14):
     print(m.verboseView(str(x)))
 
-adjacentRoom = m.decodeDirBlob( m.getRoom(1)[11] )[1]
+#adjacentRoom = m.decodeDirBlob( m.getRoom(1)[11] )[1]
 
-p.room = m.decodeDirBlob( m.getRoom(1)[11] )[1]
+#p.room = m.decodeDirBlob( m.getRoom(1)[11] )[1]
+#data.updatePlayerRoom(str(1),str(p.room))
+roomHere = data.getPlayerRoom(str(1))
+
+myString = ''.join(str(roomHere))
+
+#print("MY STRING" , str(myString))
+#p.room = myString
+
+roomSave = myString[1]
+
+p.room = roomSave
+
+    
+#if (p.room == None):
+    #p.room = 1
+
+
+    
 
 
 var = 1
 while var == 1 :  # This constructs an infinite loop
+    
+    
     print("Current ROOM: ")
     print(p.room)
     print(m.getRoom(p.room))
     print(m.getExits(p.room))
     
     direction = input("Enter a direction  :")
-
-
+    
+    
+    
     if direction == 'n' :
       p.room = m.decodeDirBlob( m.getRoom(p.room)[NORTH] )[ROOM_BLOB]
 
@@ -64,10 +87,16 @@ while var == 1 :  # This constructs an infinite loop
       p.room = m.decodeDirBlob( m.getRoom(p.room)[UP] )[ROOM_BLOB]
 
     elif direction == 'd':
-      p.room = m.decodeDirBlob( m.getRoom(p.room)[DOWN] )[ROOM_BLOB]   
+      p.room = m.decodeDirBlob( m.getRoom(p.room)[DOWN] )[ROOM_BLOB]
+      
 
     else:
-      print("must enter a valid direction")    
+      print("must enter a valid direction")
+      
+    data.updatePlayerRoom(str(1),str(p.room))
+    roomHere = data.getPlayerRoom(str(1))
+    myString = "".join(str(roomHere))
+    #print("ROOMHERE",  myString )
 
-
+    
 
