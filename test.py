@@ -34,7 +34,18 @@ myString = ''.join(str(roomHere))
 #print("MY STRING" , str(myString))
 #p.room = myString
 
-roomSave = myString[1]
+#print("LENGTH OF mySTRING", len(myString))
+#NOTE: This takes the SQL tuple string, and then extracts the 3 digits of the map to get the room save location
+if(len(myString) == 4):
+    roomSave = myString[1]
+elif(len(myString) == 5):
+    roomSave = myString[1] + myString[2]
+elif(len(myString) == 6):
+    roomSave = myString[1] + myString[2] + myString[3]
+else: roomSave = 1
+
+
+print("ROOMSAVE IS", roomSave)
 
 p.room = roomSave
 
