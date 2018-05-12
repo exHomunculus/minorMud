@@ -10,8 +10,6 @@ with a focus on an intuitive commandline.
 ### How do I get set up? ###
 
 Install python3.
-pip install telnetsrv
-pip install gevent
 
 ### Contribution guidelines ###
 
