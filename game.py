@@ -17,12 +17,7 @@ class Command(object):
                 'rest', 'sneak', 'attack', 'breakoff', 'who', 'top',
                 'steal', 'pick', 'bash', 'x', 'exit', 'party',
                 'health', 'n', 'ne', 'e', 'se', 's', 'sw', 'w',
-                'nw', 'u', 'd', '/']
-    # Associated help
-    giveHelp = "Typical useage:\r\nExample1: give <item> to <user>\r\nExample2: give <amount> <item> to <user>\r\n"
-    equipHelp = "Typical useage:\r\nEquip <item>\r\n"
-    removeHelp = "Typical useage:\r\nRemove <item>\r\n"
-    goHelp = "Typical useage:\r\nGo <place>\r\n"
+                'nw', 'u', 'd', '/', 'push', 'press', 'pull', 'experience']
 
     def __init__(self, text):
         global commands
@@ -30,35 +25,56 @@ class Command(object):
         for command in commands:
             if command.startswith(text):
                 matching.append(command)
-        # we can add some code here to AUTOMATICALLY run associated method
-        return matching
+        # AUTOMATICALLY run associated method
+        if len(matching) == 1:
+                # I hate to do this but it's the only command that doesn't require a space
+                # this will work for now, i should change this to make it more efficient
+            if text.startswith('/'):
+                self.telepath(text)
+            else:
+                # splitting and saving everything after the matching command as subtext
+                subtext = text.split(' ', 1)[1]
+                # magic sauce - run a method by using text
+            getattr(self, matching[0])(subtext)
+        else:
+            self.say(text)
+
+    def say(self, text):
+        # just SAY something, will ya?
+        # add 'You say ' before for your message
+        # add '<player.name> says ' for other's message
+        return text
 
     def give(self, subtext):
+        help = "Typical useage:\r\nExample1: give <item> to <user>\r\nExample2: give <amount> <item> to <user>\r\n"
         # if present in 1st player's inv
         # remove instance from 1st player's inv
         # add to 2nd player's inv
         # create string(s) to display transfer
-        return 1
+        return help
 
     def equip(self, subtext):
+        help = "Typical useage:\r\nEquip <item>\r\n"
         # if item in player's inv
         # equip IF possible
         # may have to remove existing item before equipping
         # generate string(s) to display equip
-        return 1
+        return help
 
     def remove(self, subtext):
+        help = "Typical useage:\r\nRemove <item>\r\n"
         # if item equipped
         # remove
         # generate string(s) to display removal
-        return 1
+        return help
 
     def go(self, subtext):
+        help = "Typical useage:\r\nGo <place>\r\n"
         # if room has go-able place
         # move player to place
         # generate string(s) for movement
         # else generate string(s) for failure
-        return 1
+        return help
 
     def sell(self, subtext):
         # if player's inv contains item
@@ -167,6 +183,13 @@ class Command(object):
         # begin combat/attack mode using BASH modifier
         return 1
 
+    def x(self, subtext=''):
+        self.exit()
+
+    def exit(self, subtext=''):
+        # let the player EXIT the game gracefully
+        return 1
+
     def party(self, subtext):
         # if player in party
         # create pretty string to display party stats
@@ -176,16 +199,48 @@ class Command(object):
         # create a pretty string to display player health/mana
         return 1
 
+    # Direction methods, they will just forward to movement method --------------------------
+    def n(self, subtext=''):
+        self.direction('n')
+
+    def ne(self, subtext=''):
+        self.direction('ne')
+
+    def e(self, subtext=''):
+        self.direction('e')
+
+    def se(self, subtext=''):
+        self.direction('se')
+
+    def s(self, subtext=''):
+        self.direction('s')
+
+    def sw(self, subtext=''):
+        self.direction('sw')
+
+    def w(self, subtext=''):
+        self.direction('w')
+
+    def nw(self, subtext=''):
+        self.direction('nw')
+
+    def u(self, subtext=''):
+        self.direction('u')
+
+    def d(self, subtext=''):
+        self.direction('d')
+
     def movement(self, direction):
-        # what DIR
-        # utilize map object to determine if DIR is available
-        # if it is, is there a door?
-        # is it open? closed? locked/unlocked?
-        # return string if closed
-        # if open
-        # use map object to find associated room#
-        # move player
+            # what DIR
+            # utilize map object to determine if DIR is available
+            # if it is, is there a door?
+            # is it open? closed? locked/unlocked?
+            # return string if closed
+            # if open
+            # use map object to find associated room#
+            # move player
         return 1
+    # End direction/movement methods ---------------------------------------------------------
 
     def telepath(self, subtext):
         # use or create a currently playing user list
@@ -207,4 +262,26 @@ class Command(object):
             failure = "Sorry! You have to be more specific."
             # Send string for failure
             return failure
+        return -1
+
+    def push(self, subtext):
+        # subtext should contain object name
+        # if pushable initiate push
+        # else create fail message
+        return 1
+
+    def press(self, subtext):
+        # subtext should contain object name
+        # if pressable initiate press
+        # else create fail message
+        return 1
+
+    def pull(self, subtext):
+        # subtext should contain object name
+        # if pullable initiate pull
+        # else create fail message
+        return 1
+
+    def experience(self, subtext=''):
+        # return player experience
         return 1
