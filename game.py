@@ -11,47 +11,60 @@ class Command(object):
     """ This is the class for the command parser.
     Send user input here and recieve the appropriate actions in return
     """
-    # Define commands!
-    commands = ['give', 'equip', 'remove', 'go', 'sell',
-                'buy', 'look', 'inventory', 'spellbook', 'status',
-                'rest', 'sneak', 'attack', 'breakoff', 'who', 'top',
-                'steal', 'pick', 'bash', 'x', 'exit', 'party',
-                'health', 'n', 'ne', 'e', 'se', 's', 'sw', 'w',
-                'nw', 'u', 'd', '/', 'push', 'press', 'pull', 'experience']
 
-    def __init__(self, text):
-        global commands
-        matching = []
-        for command in commands:
-            if command.startswith(text):
-                matching.append(command)
-        # AUTOMATICALLY run associated method
-        if len(matching) == 1:
-                # I hate to do this but it's the only command that doesn't require a space
-                # this will work for now, i should change this to make it more efficient
-            if text.startswith('/'):
-                self.telepath(text)
-            else:
-                # splitting and saving everything after the matching command as subtext
-                subtext = text.split(' ', 1)[1]
-                # magic sauce - run a method by using text
-            getattr(self, matching[0])(subtext)
+    def __init__(self):
+        self.commands = ['give', 'equip', 'remove', 'go', 'sell',
+                         'buy', 'look', 'inventory', 'spellbook', 'status',
+                         'rest', 'sneak', 'attack', 'breakoff', 'who', 'top',
+                         'steal', 'pick', 'bash', 'x', 'exit', 'party',
+                         'health', 'n', 'ne', 'e', 'se', 's', 'sw', 'w',
+                         'nw', 'u', 'd', '/', 'push', 'press', 'pull', 'experience']
+
+    def parse(self, text):
+        self.firstword = text.split(" ", 1)[0]
+        if text.startswith('/'):
+            self.telepath(text)
         else:
-            self.say(text)
+            matching = []
+            for command in self.commands:
+                if command.startswith(self.firstword):
+                    matching.append(command)
+            # AUTOMATICALLY run associated method
+            if len(matching) == 1:
+                # splitting and saving everything after the matching command as subtext
+                self.subtext = text.split(' ', 1)[1]
+                # magic sauce - run a method by using text
+                getattr(self, matching[0])(self.subtext)
+            else:
+                self.say(text)
 
     def say(self, text):
+        print("You say: " + text)
         # just SAY something, will ya?
         # add 'You say ' before for your message
         # add '<player.name> says ' for other's message
         return text
 
     def give(self, subtext):
-        help = "Typical useage:\r\nExample1: give <item> to <user>\r\nExample2: give <amount> <item> to <user>\r\n"
-        # if present in 1st player's inv
-        # remove instance from 1st player's inv
-        # add to 2nd player's inv
-        # create string(s) to display transfer
-        return help
+        helpm = "Typical useage:\r\nExample1: give <item> to <user>\r\nExample2: give <amount> <item> to <user>\r\n"
+        contents = subtext.split(" ")
+        if len(contents) == 4:
+                # test if first item is an int
+            if contents[0].isdecimal():
+                # test is second item is object
+                # test if third item is 'to'
+                if contents[2] == 'to':
+                    # test if fourth item is player
+                    print("You give " + contents[0] + " " + contents[1] + " to Player " + contents[3])
+                else:
+                    print(helpm)
+        elif len(contents) == 3:
+            if contents[1] == 'to':
+                print("You give " + contents[0] + " to player " + contents[2])
+            else:
+                print(helpm)
+        else:
+            print(helpm)
 
     def equip(self, subtext):
         help = "Typical useage:\r\nEquip <item>\r\n"
@@ -244,7 +257,8 @@ class Command(object):
 
     def telepath(self, subtext):
         # use or create a currently playing user list
-        currentPlayers = []  # <----------------------- This needs to ACTUALLY contain players
+        # <----------------------- This needs to ACTUALLY contain players
+        currentPlayers = ["Gumby", "Venloch", "Beowulf", "Avatar"]
         # remove / from string
         a = subtext.strip('/')
         # break string up from FIRST instance of ' '
@@ -253,11 +267,12 @@ class Command(object):
         # create telepath strings for player and target containing message
         matching = []
         for player in currentPlayers:
-            if player.startswith(target):
+            player = player.lower()
+            if player.startswith(target.lower()):
                 matching.append(player)
         if len(matching) == 1:
-                # Send telepath strings to player & target
-            return 1
+            # Send telepath strings to player & target
+            print("Sending a telepath to " + matching[0].capitalize() + " from Hink containing message: " + message)
         else:
             failure = "Sorry! You have to be more specific."
             # Send string for failure

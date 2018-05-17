@@ -1,6 +1,6 @@
-import map
+import game
 
-m = map.Map()
-
-for x in range(1, 14):
-    print(m.verboseView(str(x)))
+g = game.Command()
+g.parse("what the hell")
+g.parse("/gumb Remember Hector used to say, give me the melon?")
+g.parse("give 10 platinum to Gumby")
