@@ -29,6 +29,20 @@ class MudData(object):
         self.db = sqlite3.connect(self.dbname)
         self.cur = self.db.cursor()
 
+    def get(self, thing, id):
+        # So instead of repeating myself for each variant of this I make a utility knife
+        # Try to use this if you need one instance of something
+        self.cur.execute("SELECT * FROM " + thing + " WHERE id = " + id + ";")
+        return self.cur.fetchall()
+
+    """
+
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    MAP METHODS ////////////////////////////////////////////////////////////////////////////////////
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    """
+
     def createRoom(self, roomVals):
         # This function accepts a particular list of values to create a new room.
         # RoomID(int), Name(string), N,NE,E,SE,S,SW,W,NW,U,D(all int),underwater(int),
@@ -79,6 +93,14 @@ class MudData(object):
         self.cur.execute("SELECT * FROM rooms;")
         return self.cur.fetchall()
 
+    """
+
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    PLAYER METHODS /////////////////////////////////////////////////////////////////////////////////
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    """
+
     def createPlayer(self, pVals):
         # Creates a new player
         # format: id, fname, lname, password, race, class, exp, level,
@@ -113,15 +135,26 @@ class MudData(object):
         self.cur.execute("DELETE FROM players WHERE id = " + id + ";")
         self.db.commit()
 
-    def getPlayer(self, id):
-        self.cur.execute("SELECT * FROM players WHERE id = " + id + ";")
+    def getPlayers(self):
+        self.cur.execute("SELECT * FROM players;")
         return self.cur.fetchall()
+
+    """
+
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    DOOR METHODS ///////////////////////////////////////////////////////////////////////////////
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    """
 
     def getDoor(self, id):
         self.cur.execute("SELECT * FROM doors WHERE id = " + id + ";")
         return self.cur.fetchall()
 
-    def getThing(self, thing, id):
-        # So instead of repeating myself for each variant of this I make a utility knife
-        self.cur.execute("SELECT * FROM " + thing + " WHERE id = " + id + ";")
-        return self.cur.fetchall()
+    """
+
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+    ITEM METHODS ///////////////////////////////////////////////////////////////////////////////
+    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    """
