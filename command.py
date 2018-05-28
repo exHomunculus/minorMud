@@ -1,6 +1,7 @@
 """
 This module will execute player commands; to be called by game.py
-
+  This module will work in conjunction with game.py to help process
+  commands from players. It must have access to the same objects as game.py
 
 author: Bob Hinkle - hinkle.bob@gmail.com
 """
@@ -9,9 +10,12 @@ author: Bob Hinkle - hinkle.bob@gmail.com
 class Command(object):
     """ This is the class for the command parser.
     Send user input here and recieve the appropriate actions in return
+    All methods here will return a list of output strings to be sent to players
+    the list will be formatted as [[player.id, text],]
     """
 
-    def __init__(self):
+    def __init__(self, playerObject):
+        self.p = playerObject
         self.commands = ['give', 'equip', 'remove', 'go', 'sell',
                          'buy', 'look', 'inventory', 'spellbook', 'status',
                          'rest', 'sneak', 'attack', 'breakoff', 'who', 'top',
@@ -19,10 +23,13 @@ class Command(object):
                          'health', 'n', 'ne', 'e', 'se', 's', 'sw', 'w',
                          'nw', 'u', 'd', '/', 'push', 'press', 'pull', 'experience']
 
-    def parse(self, text):
+    def parse(self, playerId, text, onlinePlayers):
+        if(text == ''):
+            return -1
+        self.onlinePlayers = onlinePlayers
         self.firstword = text.split(" ", 1)[0]
         if text.startswith('/'):
-            self.telepath(text)
+            return self.telepath(str(playerId), text)
         else:
             matching = []
             for command in self.commands:
@@ -33,16 +40,36 @@ class Command(object):
                 # splitting and saving everything after the matching command as subtext
                 self.subtext = text.split(' ', 1)[1]
                 # magic sauce - run a method by using text
-                getattr(self, matching[0])(self.subtext)
+                return getattr(self, matching[0])(str(playerId), self.subtext)
             else:
-                self.say(text)
+                return self.say(str(playerId), text)
 
-    def say(self, text):
-        print("You say: " + text)
+    def say(self, playerId, text):
         # just SAY something, will ya?
-        # add 'You say ' before for your message
-        # add '<player.name> says ' for other's message
-        return text
+        # find other players in the same room with you
+        output = []
+        # this finds ALL players in the same room, even if offline
+        players = self.p.getPlayersInSameRoom(playerId)
+        realPlayers = []
+        # we have to check against those players ACTUALLY online
+        # we'll call them realPlayers
+        for onlinePlayer in self.onlinePlayers:
+            for allPlayer in players:
+                if(onlinePlayer == allPlayer):
+                    realPlayers.append(onlinePlayer)
+        # now check for realPlayers/onlinePlayers in same room
+        for player in realPlayers:
+            if(int(player) == int(playerId)):
+                # create a string for first person
+                outString = "You say, '" + text + ".'\r\n"
+                stackEntry = [player, outString]
+                output.append(stackEntry)
+            else:
+                # create 3rd person string
+                outString = self.p.getName(playerId)[0] + " says, '" + text + ".'\r\n"
+                stackEntry = [player, outString]
+                output.append(stackEntry)
+        return output
 
     def give(self, subtext):
         helpm = "Typical useage:\r\nExample1: give <item> to <user>\r\nExample2: give <amount> <item> to <user>\r\n"
