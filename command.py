@@ -5,6 +5,7 @@ This module will execute player commands; to be called by game.py
 
 author: Bob Hinkle - hinkle.bob@gmail.com
 """
+import ansi
 
 
 class Command(object):
@@ -14,8 +15,9 @@ class Command(object):
     the list will be formatted as [[player.id, text],]
     """
 
-    def __init__(self, playerObject):
+    def __init__(self, playerObject, mapObject):
         self.p = playerObject
+        self.m = mapObject
         self.commands = ['give', 'equip', 'remove', 'go', 'sell',
                          'buy', 'look', 'inventory', 'spellbook', 'status',
                          'rest', 'sneak', 'attack', 'breakoff', 'who', 'top',
@@ -24,12 +26,23 @@ class Command(object):
                          'nw', 'u', 'd', '/', 'push', 'press', 'pull', 'experience']
 
     def parse(self, playerId, text, onlinePlayers):
+        # check for trivial commands first
         if(text == ''):
-            return -1
+            return self.refresh(playerId)
+        elif(text == 'e'):
+            return self.e(playerId)
+        elif(text == 'w'):
+            return self.w(playerId)
+        elif(text == 'se'):
+            return self.se(playerId)
+        elif(text == 's'):
+            return self.s(playerId)
+        elif(text == 'n'):
+            return self.n(playerId)
         self.onlinePlayers = onlinePlayers
         self.firstword = text.split(" ", 1)[0]
         if text.startswith('/'):
-            return self.telepath(str(playerId), text)
+            return self.telepath(playerId, text)
         else:
             matching = []
             for command in self.commands:
@@ -38,11 +51,14 @@ class Command(object):
             # AUTOMATICALLY run associated method
             if len(matching) == 1:
                 # splitting and saving everything after the matching command as subtext
-                self.subtext = text.split(' ', 1)[1]
-                # magic sauce - run a method by using text
-                return getattr(self, matching[0])(str(playerId), self.subtext)
+                self.subtext = text.split(' ', 1)
+                if(len(self.subtext) == 1):
+                    # magic sauce - run a method by using text
+                    return getattr(self, matching[0])(playerId, self.subtext)
+                else:
+                    return getattr(self, matching[0])(playerId, self.subtext[1])
             else:
-                return self.say(str(playerId), text)
+                return self.say(playerId, text)
 
     def say(self, playerId, text):
         # just SAY something, will ya?
@@ -61,15 +77,28 @@ class Command(object):
         for player in realPlayers:
             if(int(player) == int(playerId)):
                 # create a string for first person
-                outString = "You say, '" + text + ".'\r\n"
+                outString = ansi.COLOR['green'] + "You say, '" + text + "'\r\n" + ansi.COLOR['white']
                 stackEntry = [player, outString]
                 output.append(stackEntry)
             else:
                 # create 3rd person string
-                outString = self.p.getName(playerId)[0] + " says, '" + text + ".'\r\n"
+                outString = ansi.COLOR['green'] + self.p.getName(playerId)[0] +\
+                    " says, '" + text + "'\r\n" + ansi.COLOR['white']
                 stackEntry = [player, outString]
                 output.append(stackEntry)
         return output
+
+    def refresh(self, playerId):
+        # Basically, what happens when a player hits enter with nothing typed
+        # right now, we're just displaying the current room
+        # maybe redo this to use the MACROS
+        for player in self.p.players:
+            print("command, player[0]:", player[0], "playerId:", playerId)
+            if(int(playerId) == int(player[0])):
+                mapId = player[12]
+        outString = self.m.briefView(mapId)
+        stackEntry = [[playerId, outString], ]
+        return stackEntry
 
     def give(self, subtext):
         helpm = "Typical useage:\r\nExample1: give <item> to <user>\r\nExample2: give <amount> <item> to <user>\r\n"
@@ -239,46 +268,66 @@ class Command(object):
         return 1
 
     # Direction methods, they will just forward to movement method --------------------------
-    def n(self, subtext=''):
-        self.direction('n')
+    def n(self, pid, subtext=''):
+        return self.direction(pid, 'n')
 
-    def ne(self, subtext=''):
-        self.direction('ne')
+    def ne(self, pid, subtext=''):
+        return self.direction(pid, 'ne')
 
-    def e(self, subtext=''):
-        self.direction('e')
+    def e(self, pid, subtext=''):
+        return self.direction(pid, 'e')
 
-    def se(self, subtext=''):
-        self.direction('se')
+    def se(self, pid, subtext=''):
+        return self.direction(pid, 'se')
 
-    def s(self, subtext=''):
-        self.direction('s')
+    def s(self, pid, subtext=''):
+        return self.direction(pid, 's')
 
-    def sw(self, subtext=''):
-        self.direction('sw')
+    def sw(self, pid, subtext=''):
+        return self.direction(pid, 'sw')
 
-    def w(self, subtext=''):
-        self.direction('w')
+    def w(self, pid, subtext=''):
+        return self.direction(pid, 'w')
 
-    def nw(self, subtext=''):
-        self.direction('nw')
+    def nw(self, pid, subtext=''):
+        return self.direction(pid, 'nw')
 
-    def u(self, subtext=''):
-        self.direction('u')
+    def u(self, pid, subtext=''):
+        return self.direction(pid, 'u')
 
-    def d(self, subtext=''):
-        self.direction('d')
+    def d(self, pid, subtext=''):
+        return self.direction(pid, 'd')
 
-    def movement(self, direction):
-            # what DIR
-            # utilize map object to determine if DIR is available
-            # if it is, is there a door?
-            # is it open? closed? locked/unlocked?
-            # return string if closed
-            # if open
-            # use map object to find associated room#
-            # move player
-        return 1
+    def direction(self, pid, direction):
+        # get player's room
+        roomId = self.p.getRoom(pid)
+        room = self.m.getRoom(roomId)
+        # what DIR
+        if(direction == 'n'):
+            goingTo = self.m.decodeDirBlob(room[2])[1]
+        elif(direction == 'ne'):
+            goingTo = self.m.decodeDirBlob(room[3])[1]
+        elif(direction == 'e'):
+            goingTo = self.m.decodeDirBlob(room[4])[1]
+        elif(direction == 'se'):
+            goingTo = self.m.decodeDirBlob(room[5])[1]
+        elif(direction == 's'):
+            goingTo = self.m.decodeDirBlob(room[6])[1]
+        elif(direction == 'sw'):
+            goingTo = self.m.decodeDirBlob(room[7])[1]
+        elif(direction == 'w'):
+            goingTo = self.m.decodeDirBlob(room[8])[1]
+        elif(direction == 'nw'):
+            goingTo = self.m.decodeDirBlob(room[9])[1]
+        elif(direction == 'u'):
+            goingTo = self.m.decodeDirBlob(room[10])[1]
+        elif(direction == 'd'):
+            goingTo = self.m.decodeDirBlob(room[11])[1]
+        if(goingTo > 0):
+            self.p.setRoom(pid, goingTo)
+            return self.refresh(pid)
+        else:
+            return -1
     # End direction/movement methods ---------------------------------------------------------
 
     def telepath(self, subtext):

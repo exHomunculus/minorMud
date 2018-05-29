@@ -33,7 +33,11 @@ class MudData(object):
         # So instead of repeating myself for each variant of this I make a utility knife
         # Try to use this if you need one instance of something
         self.cur.execute("SELECT * FROM " + thing + " WHERE id = " + id + ";")
-        return self.cur.fetchall()
+        toop = self.cur.fetchall()
+        newlist = []
+        for item in toop:
+            newlist.append(list(item))
+        return newlist
 
     """
 
@@ -86,12 +90,20 @@ class MudData(object):
     def getRoom(self, id):
         # Retrieve the values for the room.
         self.cur.execute("SELECT * FROM rooms WHERE id = " + id + ";")
-        return self.cur.fetchall()
+        toop = self.cur.fetchall()
+        newlist = []
+        for item in toop:
+            newlist.append(list(item))
+        return newlist
 
     def getMap(self):
         # Return all rooms
         self.cur.execute("SELECT * FROM rooms;")
-        return self.cur.fetchall()
+        toop = self.cur.fetchall()
+        newlist = []
+        for item in toop:
+            newlist.append(list(item))
+        return newlist
 
     """
 
@@ -137,7 +149,11 @@ class MudData(object):
 
     def getPlayers(self):
         self.cur.execute("SELECT * FROM players;")
-        return self.cur.fetchall()
+        toop = self.cur.fetchall()
+        newlist = []
+        for item in toop:
+            newlist.append(list(item))
+        return newlist
 
     """
 
@@ -149,7 +165,11 @@ class MudData(object):
 
     def getDoor(self, id):
         self.cur.execute("SELECT * FROM doors WHERE id = " + id + ";")
-        return self.cur.fetchall()
+        toop = self.cur.fetchall()
+        newlist = []
+        for item in toop:
+            newlist.append(list(item))
+        return newlist
 
     """
 

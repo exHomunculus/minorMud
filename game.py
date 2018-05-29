@@ -7,10 +7,13 @@ author: Bob Hinkle - hinkle.bob@gmail.com
 import mudserver
 import player
 import command
+import map
+
 
 # instantiate game objects
 p = player.Player()
-c = command.Command(p)
+m = map.Map()
+c = command.Command(p, m)
 # Populate mudserver.gamePlayers so we can login existing players
 mudserver.gamePlayers = p.getPlayersForLogin()
 onlinePlayers = []

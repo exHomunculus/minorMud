@@ -6,6 +6,7 @@ Contains call to Map which should be instantiated when the Mud is loaded.
 author: Bob Hinkle - hinkle.bob@gmail.com
 """
 import muddata
+import ansi
 
 # Change this to whatever the current name of the dB is.
 dbname = 'test'
@@ -39,7 +40,7 @@ class Map(object):
             b = {"n": a[0], "ne": a[1], "e": a[2], "se": a[3], "s": a[4],
                  "sw": a[5], "w": a[6], "nw": a[7], "u": a[8], "d": a[9]}
         # Create an empty string to be returned
-        self.exitString = ""
+        self.exitString = ansi.COLOR['white'] + ""
         # Iterate through dictionary
         for exit in b:
             # If the BLOB isn't null, save the string associated with it, courtesy of the dictionary
@@ -47,9 +48,9 @@ class Map(object):
                 self.exitString += exit + ", "  # adding a comma. There could be more than 1 exit
         # If there were no exits, we don't want a blank string. We want there to be 'None'
         if(self.exitString == ""):
-            self.exitString = "None"
+            self.exitString = ansi.COLOR['white'] + "None"
         # Create return string. We strip the trailing ", " if there is one.
-        return "Obvious exits: " + self.exitString.rstrip(", ") + "\r\n"
+        return ansi.COLOR['green'] + "Obvious exits: " + self.exitString.rstrip(", ") + "\r\n"
 
     def briefView(self, id):
         # This is the clean way to see a room.

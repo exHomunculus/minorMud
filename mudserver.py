@@ -20,9 +20,6 @@ gamePlayers = []  # to be populated with game.py TO VERIFY LOGIN!
 players = []  # list of players connected
 lock = threading.Lock()
 
-COLOR = {'black': b'\x1b[30m', 'red': b'\x1b[31m', 'green': b'\x1b[32m',
-         'yellow': b'\x1b[33m', 'blue': b'\x1b[34m', 'magenta': b'\x1b[35m',
-         'cyan': b'\x1b[36m', 'white': b'\x1b[37m'}
 # input from players will be placed on this stack to be processed
 # format is [[player.id,<data>],]
 inputStack = []
@@ -155,9 +152,8 @@ class mudServer(threading.Thread):
                 for player in gamePlayers:
                     if(a.lower() == player[1].lower()):
                         return player
-                    else:
-                        self.socket.send(b"I'm sorry. Please try again...\r\n")
-                        i += 1
+                self.socket.send(b"I'm sorry. Please try again...\r\n")
+                i += 1
         self.socket.send(b'Too many tries...\r\n')
         return -1
 
