@@ -304,30 +304,64 @@ class Command(object):
         room = self.m.getRoom(roomId)
         # what DIR
         if(direction == 'n'):
-            goingTo = self.m.decodeDirBlob(room[2])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[2])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'ne'):
-            goingTo = self.m.decodeDirBlob(room[3])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[3])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'e'):
-            goingTo = self.m.decodeDirBlob(room[4])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[4])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'se'):
-            goingTo = self.m.decodeDirBlob(room[5])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[5])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 's'):
-            goingTo = self.m.decodeDirBlob(room[6])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[6])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'sw'):
-            goingTo = self.m.decodeDirBlob(room[7])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[7])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'w'):
-            goingTo = self.m.decodeDirBlob(room[8])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[8])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'nw'):
-            goingTo = self.m.decodeDirBlob(room[9])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[9])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'u'):
-            goingTo = self.m.decodeDirBlob(room[10])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[10])[1]
+            except:
+                return self.bump(pid, direction)
         elif(direction == 'd'):
-            goingTo = self.m.decodeDirBlob(room[11])[1]
+            try:
+                goingTo = self.m.decodeDirBlob(room[11])[1]
+            except:
+                return self.bump(pid, direction)
         if(goingTo > 0):
             self.p.setRoom(pid, goingTo)
             return self.refresh(pid)
         else:
             return -1
+
+    def bump(self, pid, dir):
+        print("player:", pid, "just tried to go", dir, "and failed.")
+        return [[pid, ansi.COLOR['red'] + "There is no exit in that direction.\r\n"]]
     # End direction/movement methods ---------------------------------------------------------
 
     def telepath(self, subtext):
